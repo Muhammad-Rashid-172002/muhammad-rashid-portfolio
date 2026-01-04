@@ -26,7 +26,7 @@ class AboutMePage extends StatelessWidget {
                       const CircleAvatar(
                         radius: 55,
                         backgroundImage: AssetImage(
-                          'assets/profile.jpg', // add your image
+                          'assets/Rashid_Profile_Pic_01.png', // add your image
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -41,15 +41,13 @@ class AboutMePage extends StatelessWidget {
                       const SizedBox(height: 4),
                       const Text(
                         'Flutter Developer',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.grey, fontSize: 14),
                       ),
+                     // Icon(Icons., color: Color(0xFF22D3EE), size: 18),
                       const SizedBox(height: 20),
 
-                      _infoTile(Icons.phone, '+92 XXX XXXXXXX'),
-                      _infoTile(Icons.email, 'rashid.dev@gmail.com'),
+                      _infoTile(Icons.phone, '+92 319 5176014'),
+                      _infoTile(Icons.email, 'muhammadrashid172002@gmail.com'),
                       _infoTile(Icons.location_on, 'Pakistan'),
 
                       const Spacer(),
@@ -159,10 +157,7 @@ class AboutMePage extends StatelessWidget {
         children: [
           Icon(icon, color: Color(0xFF22D3EE), size: 18),
           const SizedBox(width: 10),
-          Text(
-            text,
-            style: const TextStyle(color: Colors.grey),
-          ),
+          Text(text, style: const TextStyle(color: Colors.grey)),
         ],
       ),
     );
