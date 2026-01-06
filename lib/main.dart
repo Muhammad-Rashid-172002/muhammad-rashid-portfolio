@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rashid_codes/AboutMePage.dart';
+import 'package:rashid_codes/AboutMePage.dart' as aboutme;
+import 'package:rashid_codes/Resume_section.dart' as resume;
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const AboutMePage()
+      home: const resume.ResumePage()
     );
   }
 }
