@@ -236,7 +236,7 @@ class _LightCard extends StatelessWidget {
     );
   }
 }
-
+///
 // ---------------- SKILL CHIP ----------------
 class _SkillChip extends StatelessWidget {
   final String label;
