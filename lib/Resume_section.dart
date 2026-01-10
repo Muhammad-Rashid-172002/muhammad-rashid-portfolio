@@ -36,17 +36,17 @@ class ResumePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-                      _TitleWithIcon(
+                      _SectionTitle(
                         icon: Icons.school,
                         title: 'Education',
                       ),
                       SizedBox(height: 20),
-                      _LightCard(
+                      _ResumeCard(
                         year: '2022 – Present',
                         title: 'BS Software Engineering',
                         subtitle: 'University / Institute',
                       ),
-                      _LightCard(
+                      _ResumeCard(
                         year: '2019 – 2021',
                         title: 'Intermediate (Computer Science)',
                         subtitle: 'College',
@@ -62,17 +62,17 @@ class ResumePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-                      _TitleWithIcon(
+                      _SectionTitle(
                         icon: Icons.work_outline,
                         title: 'Experience',
                       ),
                       SizedBox(height: 20),
-                      _LightCard(
+                      _ResumeCard(
                         year: '2024 – Present',
                         title: 'Flutter Developer',
-                        subtitle: 'Freelance / Client Projects',
+                        subtitle: 'Freelance / Projects',
                       ),
-                      _LightCard(
+                      _ResumeCard(
                         year: '2023 – 2024',
                         title: 'Flutter Intern',
                         subtitle: 'CodeAlpha',
@@ -94,13 +94,7 @@ class ResumePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-                      Text(
-                        'Work Skills',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      _SkillTitle('Work Skills'),
                       SizedBox(height: 16),
                       Wrap(
                         spacing: 12,
@@ -126,13 +120,7 @@ class ResumePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-                      Text(
-                        'Soft Skills',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      _SkillTitle('Soft Skills'),
                       SizedBox(height: 16),
                       Wrap(
                         spacing: 12,
@@ -157,12 +145,12 @@ class ResumePage extends StatelessWidget {
   }
 }
 
-// ---------------- TITLE WITH ICON ----------------
-class _TitleWithIcon extends StatelessWidget {
+// ---------------- SECTION TITLE ----------------
+class _SectionTitle extends StatelessWidget {
   final IconData icon;
   final String title;
 
-  const _TitleWithIcon({
+  const _SectionTitle({
     required this.icon,
     required this.title,
   });
@@ -178,6 +166,7 @@ class _TitleWithIcon extends StatelessWidget {
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
       ],
@@ -185,13 +174,13 @@ class _TitleWithIcon extends StatelessWidget {
   }
 }
 
-// ---------------- CARD ----------------
-class _LightCard extends StatelessWidget {
+// ---------------- RESUME CARD ----------------
+class _ResumeCard extends StatelessWidget {
   final String year;
   final String title;
   final String subtitle;
 
-  const _LightCard({
+  const _ResumeCard({
     required this.year,
     required this.title,
     required this.subtitle,
@@ -236,7 +225,26 @@ class _LightCard extends StatelessWidget {
     );
   }
 }
-///
+
+// ---------------- SKILL TITLE ----------------
+class _SkillTitle extends StatelessWidget {
+  final String text;
+
+  const _SkillTitle(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 26,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+    );
+  }
+}
+
 // ---------------- SKILL CHIP ----------------
 class _SkillChip extends StatelessWidget {
   final String label;
@@ -253,7 +261,10 @@ class _SkillChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(fontSize: 14),
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.black87,
+        ),
       ),
     );
   }
