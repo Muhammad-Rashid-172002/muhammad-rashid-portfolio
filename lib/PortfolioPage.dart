@@ -8,7 +8,7 @@ class PortfolioPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
+        color: const Color(0xFF0F172A), // dark background
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -20,20 +20,23 @@ class PortfolioPage extends StatelessWidget {
             style: TextStyle(
               fontSize: 36,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
 
           const SizedBox(height: 16),
 
-          // FILTER TABS
-          Row(
-            children: const [
-              _FilterChip(title: 'All', active: true),
-              _FilterChip(title: 'App Development'),
-              _FilterChip(title: 'Web Development'),
-              _FilterChip(title: 'UI/UX'),
-            ],
+          // FILTER TABS (scrollable)
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: const [
+                _FilterChip(title: 'All', active: true),
+                _FilterChip(title: 'App Development'),
+                _FilterChip(title: 'Web Development'),
+                _FilterChip(title: 'UI/UX'),
+              ],
+            ),
           ),
 
           const SizedBox(height: 32),
@@ -87,13 +90,13 @@ class _FilterChip extends StatelessWidget {
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
       decoration: BoxDecoration(
-        color: active ? const Color(0xFFF97316) : const Color(0xFFE5E7EB),
+        color: active ? const Color(0xFF3B82F6) : const Color(0xFF1F2937), // dark inactive
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         title,
         style: TextStyle(
-          color: active ? Colors.white : Colors.black87,
+          color: active ? Colors.white : Colors.grey[300],
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -113,56 +116,65 @@ class _PortfolioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFEDD5),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // IMAGE PLACEHOLDER
-          Container(
-            height: 140,
-            decoration: BoxDecoration(
-              color: Colors.black12,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(18),
-              ),
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.image_outlined,
-                size: 40,
-                color: Colors.black38,
-              ),
-            ),
+        onTap: () {},
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF111827), // card dark color
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: const Color(0xFF1F2937)), // subtle border
           ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // IMAGE PLACEHOLDER
+              Container(
+                height: 140,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1F2937),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(18),
+                  ),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.image_outlined,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
 
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      category,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  category,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

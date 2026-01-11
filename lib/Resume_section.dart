@@ -3,236 +3,307 @@ import 'package:flutter/material.dart';
 class ResumePage extends StatelessWidget {
   const ResumePage({super.key});
 
-  final Color primary = const Color(0xFFFF7A18);
-  final Color cardColor = const Color(0xFFFFE4C7);
-  final Color chipColor = const Color(0xFFF1F5F9);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0F172A),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              _topBar(),
+              const SizedBox(height: 30),
+
+              Expanded(
+                child: Row(children: [Expanded(child: _resumeContent())]),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ================= TOP BAR =================
+  Widget _topBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          'Muhammad Rashid',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: const Color(0xFF111827),
+            borderRadius: BorderRadius.circular(40),
+          ),
+          child: Row(
+            children: const [
+              _NavItem(icon: Icons.home, label: 'Home'),
+              _NavItem(icon: Icons.description, label: 'Resume', active: true),
+              _NavItem(icon: Icons.work, label: 'Work'),
+              _NavItem(icon: Icons.mail, label: 'Contact'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ================= RESUME CONTENT =================
+  Widget _resumeContent() {
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.all(26),
+        decoration: BoxDecoration(
+          color: const Color(0xFF111827),
+          borderRadius: BorderRadius.circular(22),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // HEADER
+            Row(
+              children: const [
+                Text(
+                  'RESUME',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Divider(color: Color(0xFF3B82F6), thickness: 2),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 32),
+
+            // ===== EDUCATION & EXPERIENCE (SIDE BY SIDE) =====
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // EDUCATION
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _sectionTitle('Education', Icons.school,),
+                      _resumeCard(
+                        '2023 - 2024',
+                        'Flutter Development',
+                        'SMIT',
+                        Icons.school,
+                      ),
+                      _resumeCard(
+                        '2022 - 2025',
+                        'Software Engineering',
+                        'Sarhad University',
+                        Icons.school,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(width: 30),
+
+                // EXPERIENCE
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _sectionTitle('Experience',Icons.work,),
+                      _resumeCard(
+                        '2025 - Present',
+                        'Flutter Developer',
+                        'MR Technologies',
+                        Icons.work,
+                      ),
+                      _resumeCard(
+                        '2024 - 2025',
+                        'Flutter Developer Intern',
+                        'Xohub Solution',
+                        Icons.work,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 40),
+
+            // ===== WORK SKILLS =====
+            _sectionTitle('Work Skills'),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: const [
+                _SkillChip('Flutter'),
+                _SkillChip('Dart'),
+                _SkillChip('Firebase'),
+                _SkillChip('REST APIs'),
+                _SkillChip('Git'),
+                _SkillChip('UI/UX Design'),
+                _SkillChip('Provider / Riverpod'),
+                _SkillChip('Animations & Widgets'),
+                _SkillChip('Flutter Web & Desktop'),
+                _SkillChip('SQLite / Hive / SharedPreferences'),
+              ],
+            ),
+
+            const SizedBox(height: 32),
+
+            // ===== SOFT SKILLS =====
+            _sectionTitle('Soft Skills'),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: const [
+                _SkillChip('Communication'),
+                _SkillChip('Time Management'),
+                _SkillChip('Problem Solving'),
+                _SkillChip('Team Work'),
+                _SkillChip('Adaptability'),
+                _SkillChip('Mentorship'),
+                _SkillChip('Critical Thinking'),
+                _SkillChip('Creativity'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+// ================= HELPERS =================
+Widget _sectionTitle(String title, [IconData? icon]) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 16),
+    child: Row(
+      children: [
+        if (icon != null) ...[
+          Icon(icon, color: Colors.blueAccent, size: 22),
+          const SizedBox(width: 8),
+        ],
+        Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+  Widget _resumeCard(
+    String year,
+    String title,
+    String subtitle,
+    IconData icon,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF1F2937)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: Colors.blueAccent, size: 28), // icon added
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(year, style: const TextStyle(color: Colors.grey)),
+                const SizedBox(height: 6),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(subtitle, style: const TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ================= NAV ITEM =================
+class _NavItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool active;
+
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    this.active = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
-      color: const Color(0xFFF8FAFC),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-
-          // ===== TITLE =====
-          const Text(
-            "Resume",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              decoration: TextDecoration.none,
-            ),
-          ),
-
-          const SizedBox(height: 28),
-
-          // ===== EDUCATION & EXPERIENCE =====
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _section(
-                  icon: Icons.school,
-                  title: "Education",
-                  items: [
-                    _resumeCard(
-                      "2020 - 2021",
-                      "Software Development",
-                      "Moringa School",
-                    ),
-                    _resumeCard(
-                      "2012 - 2016",
-                      "Disaster Management",
-                      "Masinde Muliro University",
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(width: 24),
-
-              Expanded(
-                child: _section(
-                  icon: Icons.work,
-                  title: "Experience",
-                  items: [
-                    _resumeCard(
-                      "2022 - Present",
-                      "Technical Mentor",
-                      "Moringa School",
-                    ),
-                    _resumeCard(
-                      "2021 - 2022",
-                      "Website Development",
-                      "Village 2 Nation",
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 28),
-
-          // ===== SKILLS =====
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _skillSection(
-                  title: "Work Skills",
-                  skills: [
-                    "Flutter",
-                    "Dart",
-                    "Firebase",
-                    "REST APIs",
-                    "Git",
-                    "UI/UX",
-                    "JavaScript",
-                    "HTML5",
-                    "CSS3",
-                  ],
-                ),
-              ),
-
-              const SizedBox(width: 24),
-
-              Expanded(
-                child: _skillSection(
-                  title: "Soft Skills",
-                  skills: [
-                    "Time Management",
-                    "Mentorship",
-                    "Communication",
-                    "Flexibility",
-                    "Research",
-                    "Writing",
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ===== SECTION HEADER =====
-  Widget _section({
-    required IconData icon,
-    required String title,
-    required List<Widget> items,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: primary, size: 20),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                decoration: TextDecoration.none,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 14),
-        ...items,
-      ],
-    );
-  }
-
-  // ===== RESUME CARD =====
-  Widget _resumeCard(String year, String title, String subtitle) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.symmetric(horizontal: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(12),
+        color: active ? const Color(0xFF3B82F6) : Colors.transparent,
+        borderRadius: BorderRadius.circular(30),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
+          Icon(icon, size: 18, color: active ? Colors.white : Colors.grey),
+          const SizedBox(width: 6),
           Text(
-            year,
-            style: const TextStyle(
-              fontSize: 11,
-              color: Colors.black54,
-              decoration: TextDecoration.none,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              decoration: TextDecoration.none,
-            ),
-          ),
-          Text(
-            subtitle,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.black54,
-              decoration: TextDecoration.none,
-            ),
+            label,
+            style: TextStyle(color: active ? Colors.white : Colors.grey),
           ),
         ],
       ),
     );
   }
+}
 
-  // ===== SKILL SECTION =====
-  Widget _skillSection({
-    required String title,
-    required List<String> skills,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            decoration: TextDecoration.none,
-          ),
-        ),
-        const SizedBox(height: 14),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: skills.map(
-            (skill) {
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 7,
-                ),
-                decoration: BoxDecoration(
-                  color: chipColor,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Text(
-                  skill,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    decoration: TextDecoration.none,
-                  ),
-                ),
-              );
-            },
-          ).toList(),
-        ),
-      ],
+// ================= SKILL CHIP =================
+class _SkillChip extends StatelessWidget {
+  final String label;
+  const _SkillChip(this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1F2937),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(color: Colors.white, fontSize: 13),
+      ),
     );
   }
 }
