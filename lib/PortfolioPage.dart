@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PortfolioPage extends StatelessWidget {
   const PortfolioPage({super.key});
@@ -6,67 +7,108 @@ class PortfolioPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: const Color(0xFF020617),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: const PortfolioContent(),
+        ),
+      ),
+    );
+  }
+}
+
+class PortfolioContent extends StatefulWidget {
+  const PortfolioContent({super.key});
+
+  @override
+  State<PortfolioContent> createState() => _PortfolioContentState();
+}
+
+class _PortfolioContentState extends State<PortfolioContent> {
+  String selectedFilter = 'All';
+
+  List<PortfolioProject> get filteredProjects {
+    if (selectedFilter == 'All') return projects;
+
+    return projects
+        .where((p) =>
+            p.tech.toLowerCase().contains(selectedFilter.toLowerCase()))
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F172A), // dark background
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: const Color(0xFF1E293B)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // HEADER
+          /// TITLE
           const Text(
-            'Portfolio',
+            'Selected Work',
             style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
+              fontSize: 40,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.5,
               color: Colors.white,
             ),
           ),
+          const SizedBox(height: 8),
+          const Text(
+            'A collection of apps and products I’ve built',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 15,
+            ),
+          ),
+          const SizedBox(height: 28),
 
-          const SizedBox(height: 16),
-
-          // FILTER TABS (scrollable)
+          /// FILTERS
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: const [
-                _FilterChip(title: 'All', active: true),
-                _FilterChip(title: 'App Development'),
-                _FilterChip(title: 'Web Development'),
-                _FilterChip(title: 'UI/UX'),
-              ],
+              children: ['All', 'Flutter', 'AI', 'Web', 'UI/UX']
+                  .map(
+                    (filter) => GestureDetector(
+                      onTap: () => setState(() => selectedFilter = filter),
+                      child: FilterChipItem(
+                        title: filter,
+                        active: selectedFilter == filter,
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
 
           const SizedBox(height: 32),
 
-          // GRID
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 24,
-              mainAxisSpacing: 24,
-              childAspectRatio: 1.25,
-              children: const [
-                _PortfolioCard(
-                  title: 'Smart Bank App',
-                  category: 'Flutter • Firebase',
+          /// GRID
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 900;
+
+              return GridView.builder(
+                itemCount: filteredProjects.length,
+                shrinkWrap: true, // important!
+                physics:
+                    const NeverScrollableScrollPhysics(), // so scrolls with parent
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isWide ? 3 : 2,
+                  mainAxisSpacing: 24,
+                  crossAxisSpacing: 24,
+                  childAspectRatio: 1.15,
                 ),
-                _PortfolioCard(
-                  title: 'Blog Website',
-                  category: 'Next.js',
-                ),
-                _PortfolioCard(
-                  title: 'Rental App UI',
-                  category: 'Flutter UI/UX',
-                ),
-                _PortfolioCard(
-                  title: 'IdeaFlow',
-                  category: 'Web Development',
-                ),
-              ],
-            ),
+                itemBuilder: (context, index) {
+                  return PortfolioCard(project: filteredProjects[index]);
+                },
+              );
+            },
           ),
         ],
       ),
@@ -74,12 +116,88 @@ class PortfolioPage extends StatelessWidget {
   }
 }
 
-// ---------------- FILTER CHIP ----------------
-class _FilterChip extends StatelessWidget {
+
+/* -------------------------------------------------------------------------- */
+/*                                    DATA                                    */
+/* -------------------------------------------------------------------------- */
+
+class PortfolioProject {
+  final String title;
+  final String tech;
+  final String image;
+  final String github;
+
+  const PortfolioProject({
+    required this.title,
+    required this.tech,
+    required this.image,
+    required this.github,
+  });
+}
+
+const List<PortfolioProject> projects = [
+  PortfolioProject(
+    title: 'IELTS AI Study Assistant',
+    tech: 'Flutter • AI • Firebase',
+    image: 'assets/ILETS.png',
+    github:
+        'https://github.com/Muhammad-Rashid-172002/IELTS-AI-Study-Assistant',
+  ),
+  PortfolioProject(
+    title: 'NutriScan',
+    tech: 'Flutter • Health',
+    image: 'assets/nutriscan.png',
+    github: 'https://github.com/Muhammad-Rashid-172002/intership_Task',
+  ),
+  PortfolioProject(
+    title: 'Expense Tracker',
+    tech: 'Flutter • Hive',
+    image: 'assets/expanse_tracker.png',
+    github: 'https://github.com/Muhammad-Rashid-172002/Artha-Expense-',
+  ),
+  PortfolioProject(
+    title: 'Chess Game',
+    tech: 'Flutter • Game',
+    image: 'assets/chess_game.png',
+    github: 'https://github.com/Muhammad-Rashid-172002/Chess_Game',
+  ),
+  PortfolioProject(
+    title: 'Fitness UI',
+    tech: 'Flutter • UI',
+    image: 'assets/fitness_ui.png',
+    github: 'https://github.com/Muhammad-Rashid-172002/Fitness_App',
+  ),
+  PortfolioProject(
+    title: 'Makkah Journey App',
+    tech: 'Flutter • Travel',
+    image: 'assets/Makkah-Journey.png',
+    github: 'https://github.com/Muhammad-Rashid-172002/Makkah-Journey',
+  ),
+  PortfolioProject(
+    title: 'Company Website',
+    tech: 'Web Project',
+    image: 'assets/company_Web.png',
+    github:
+        'https://github.com/Muhammad-Rashid-172002/Noor-Diesel-Company-Website',
+  ),
+  PortfolioProject(
+    title: 'GenieGPT',
+    tech: 'Flutter • AI • Chatbot',
+    image: 'assets/gpt.jpeg',
+    github: 'https://github.com/Muhammad-Rashid-172002/GenieGPT',
+  ),
+];
+
+/* -------------------------------------------------------------------------- */
+/*                                FILTER CHIP                                 */
+/* -------------------------------------------------------------------------- */
+
+class FilterChipItem extends StatelessWidget {
   final String title;
   final bool active;
 
-  const _FilterChip({
+  const FilterChipItem({
+    super.key,
     required this.title,
     this.active = false,
   });
@@ -88,15 +206,18 @@ class _FilterChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
-        color: active ? const Color(0xFF3B82F6) : const Color(0xFF1F2937), // dark inactive
-        borderRadius: BorderRadius.circular(20),
+        color: active ? const Color(0xFF38BDF8) : const Color(0xFF020617),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: active ? Colors.transparent : const Color(0xFF1E293B),
+        ),
       ),
       child: Text(
         title,
         style: TextStyle(
-          color: active ? Colors.white : Colors.grey[300],
+          color: active ? Colors.black : Colors.grey[300],
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -104,75 +225,96 @@ class _FilterChip extends StatelessWidget {
   }
 }
 
-// ---------------- PORTFOLIO CARD ----------------
-class _PortfolioCard extends StatelessWidget {
-  final String title;
-  final String category;
+/* -------------------------------------------------------------------------- */
+/*                               PORTFOLIO CARD                               */
+/* -------------------------------------------------------------------------- */
 
-  const _PortfolioCard({
-    required this.title,
-    required this.category,
-  });
+class PortfolioCard extends StatefulWidget {
+  final PortfolioProject project;
+
+  const PortfolioCard({super.key, required this.project});
+
+  @override
+  State<PortfolioCard> createState() => _PortfolioCardState();
+}
+
+class _PortfolioCardState extends State<PortfolioCard> {
+  bool hover = false;
+
+  Future<void> _openGithub() async {
+    final uri = Uri.parse(widget.project.github);
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(18),
-        onTap: () {},
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF111827), // card dark color
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFF1F2937)), // subtle border
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // IMAGE PLACEHOLDER
-              Container(
-                height: 140,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1F2937),
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(18),
-                  ),
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.image_outlined,
-                    size: 40,
-                    color: Colors.grey,
-                  ),
-                ),
+    return MouseRegion(
+      onEnter: (_) => setState(() => hover = true),
+      onExit: (_) => setState(() => hover = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        transform:
+            hover ? (Matrix4.identity()..translate(0, -6)) : Matrix4.identity(),
+        child: Material(
+          color: const Color(0xFF020617),
+          borderRadius: BorderRadius.circular(20),
+          child: InkWell(
+            onTap: _openGithub,
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: const Color(0xFF1E293B)),
               ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// IMAGE
+                  Container(
+                    height: 150,
+                    padding: const EdgeInsets.all(14),
+                    child: Image.asset(
+                      widget.project.image,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
 
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                  /// TEXT
+                  Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.project.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          widget.project.tech,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'View on GitHub →',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF38BDF8),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      category,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
