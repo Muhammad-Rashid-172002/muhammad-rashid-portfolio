@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rashid_codes/AboutMePage.dart';
+import 'package:rashid_codes/Footer_Widget.dart';
 import 'package:rashid_codes/PortfolioPage.dart';
 import 'package:rashid_codes/Resume_section.dart';
 import 'package:rashid_codes/contactPage.dart';
@@ -109,6 +110,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 50),
                   Container(key: contactKey, child: const ContactPage()),
                   const SizedBox(height: 50),
+                   const PortfolioFooter(),
                 ],
               ),
             ),

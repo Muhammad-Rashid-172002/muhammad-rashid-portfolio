@@ -7,7 +7,7 @@ class PortfolioPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF020617),
+      color: const Color(0xFF0F172A), // Match AboutMePage background
       child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -25,8 +25,37 @@ class PortfolioContent extends StatefulWidget {
   State<PortfolioContent> createState() => _PortfolioContentState();
 }
 
-class _PortfolioContentState extends State<PortfolioContent> {
+class _PortfolioContentState extends State<PortfolioContent>
+    with SingleTickerProviderStateMixin {
   String selectedFilter = 'All';
+
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   List<PortfolioProject> get filteredProjects {
     if (selectedFilter == 'All') return projects;
@@ -37,85 +66,98 @@ class _PortfolioContentState extends State<PortfolioContent> {
         .toList();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: const Color(0xFF1E293B)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// TITLE
-          const Text(
-            'Selected Work',
-            style: TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'A collection of apps and products I’ve built',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 15,
-            ),
-          ),
-          const SizedBox(height: 28),
-
-          /// FILTERS
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: ['All', 'Flutter', 'AI', 'Web', 'UI/UX']
-                  .map(
-                    (filter) => GestureDetector(
-                      onTap: () => setState(() => selectedFilter = filter),
-                      child: FilterChipItem(
-                        title: filter,
-                        active: selectedFilter == filter,
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-
-          const SizedBox(height: 32),
-
-          /// GRID
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isWide = constraints.maxWidth > 900;
-
-              return GridView.builder(
-                itemCount: filteredProjects.length,
-                shrinkWrap: true, // important!
-                physics:
-                    const NeverScrollableScrollPhysics(), // so scrolls with parent
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: isWide ? 3 : 2,
-                  mainAxisSpacing: 24,
-                  crossAxisSpacing: 24,
-                  childAspectRatio: 1.15,
-                ),
-                itemBuilder: (context, index) {
-                  return PortfolioCard(project: filteredProjects[index]);
-                },
-              );
-            },
-          ),
-        ],
+  // Helper fade + slide animation
+  Widget _animate(Widget child, {Offset beginOffset = const Offset(0, 0.2)}) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position:
+            Tween<Offset>(begin: beginOffset, end: Offset.zero).animate(_fadeAnimation),
+        child: child,
       ),
     );
   }
-}
 
+  @override
+  Widget build(BuildContext context) {
+    return _animate(
+      Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: const Color(0xFF1F2937)),
+          color: const Color(0xFF111827), // card background like AboutMe
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// TITLE
+            const Text(
+              'Selected Work',
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.5,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'A collection of apps and products I’ve built',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 15,
+              ),
+            ),
+            const SizedBox(height: 28),
+
+            /// FILTERS
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: ['All', 'Flutter', 'AI', 'Web', 'UI/UX']
+                    .map(
+                      (filter) => GestureDetector(
+                        onTap: () => setState(() => selectedFilter = filter),
+                        child: FilterChipItem(
+                          title: filter,
+                          active: selectedFilter == filter,
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            /// GRID
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isWide = constraints.maxWidth > 900;
+
+                return GridView.builder(
+                  itemCount: filteredProjects.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: isWide ? 3 : 2,
+                    mainAxisSpacing: 24,
+                    crossAxisSpacing: 24,
+                    childAspectRatio: 1.15,
+                  ),
+                  itemBuilder: (context, index) {
+                    return PortfolioCard(project: filteredProjects[index]);
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      beginOffset: const Offset(0, 0.1),
+    );
+  }
+}
 
 /* -------------------------------------------------------------------------- */
 /*                                    DATA                                    */
@@ -204,20 +246,21 @@ class FilterChipItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
-        color: active ? const Color(0xFF38BDF8) : const Color(0xFF020617),
+        color: active ? const Color(0xFF3B82F6) : const Color(0xFF111827),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: active ? Colors.transparent : const Color(0xFF1E293B),
+          color: active ? Colors.transparent : const Color(0xFF1F2937),
         ),
       ),
       child: Text(
         title,
         style: TextStyle(
-          color: active ? Colors.black : Colors.grey[300],
+          color: active ? Colors.white : Colors.grey[300],
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -238,7 +281,8 @@ class PortfolioCard extends StatefulWidget {
   State<PortfolioCard> createState() => _PortfolioCardState();
 }
 
-class _PortfolioCardState extends State<PortfolioCard> {
+class _PortfolioCardState extends State<PortfolioCard>
+    with SingleTickerProviderStateMixin {
   bool hover = false;
 
   Future<void> _openGithub() async {
@@ -256,7 +300,7 @@ class _PortfolioCardState extends State<PortfolioCard> {
         transform:
             hover ? (Matrix4.identity()..translate(0, -6)) : Matrix4.identity(),
         child: Material(
-          color: const Color(0xFF020617),
+          color: const Color(0xFF111827),
           borderRadius: BorderRadius.circular(20),
           child: InkWell(
             onTap: _openGithub,
@@ -264,7 +308,7 @@ class _PortfolioCardState extends State<PortfolioCard> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF1E293B)),
+                border: Border.all(color: const Color(0xFF1F2937)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,7 +350,7 @@ class _PortfolioCardState extends State<PortfolioCard> {
                           'View on GitHub →',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Color(0xFF38BDF8),
+                            color: Color(0xFF3B82F6),
                           ),
                         ),
                       ],

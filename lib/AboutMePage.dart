@@ -7,33 +7,33 @@ class AboutMePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(24),
-      child: LayoutBuilder(builder: (context, constraints) {
-        final isWide = constraints.maxWidth > 900;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // MAIN CONTENT
-            isWide
-                ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // LEFT PROFILE
-                      _profileCard(),
-                      const SizedBox(width: 30),
-                      // RIGHT CONTENT
-                      Expanded(child: _rightContent()),
-                    ],
-                  )
-                : Column(
-                    children: [
-                      _profileCard(),
-                      const SizedBox(height: 30),
-                      _rightContent(),
-                    ],
-                  ),
-          ],
-        );
-      }),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth > 900;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // MAIN CONTENT
+              isWide
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _profileCard(),
+                        const SizedBox(width: 40),
+                        Expanded(child: _rightContent()),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        _profileCard(),
+                        const SizedBox(height: 30),
+                        _rightContent(),
+                      ],
+                    ),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -41,10 +41,17 @@ class AboutMePage extends StatelessWidget {
     return SizedBox(
       width: 300,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(22),
         decoration: BoxDecoration(
           color: const Color(0xFF111827),
           borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
         child: Column(
           children: [
@@ -52,7 +59,7 @@ class AboutMePage extends StatelessWidget {
               radius: 55,
               backgroundImage: AssetImage('assets/Rashid_Profile_Pic_01.png'),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             const Text(
               'Muhammad Rashid',
               style: TextStyle(
@@ -61,7 +68,7 @@ class AboutMePage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             const Text(
               'Flutter Developer',
               style: TextStyle(color: Colors.grey),
@@ -70,17 +77,18 @@ class AboutMePage extends StatelessWidget {
             _infoTile(Icons.phone, '+92 319 5176014'),
             _infoTile(Icons.email, 'muhammadrashid172002@gmail.com'),
             _infoTile(Icons.location_on, 'Pakistan'),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () {},
               icon: const Icon(Icons.download),
               label: const Text('Download Resume'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
-                minimumSize: const Size(double.infinity, 45),
+                minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
+                elevation: 6,
               ),
             ),
           ],
@@ -91,10 +99,17 @@ class AboutMePage extends StatelessWidget {
 
   Widget _rightContent() {
     return Container(
-      padding: const EdgeInsets.all(26),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: const Color(0xFF111827),
         borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,12 +126,10 @@ class AboutMePage extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 16),
-              Expanded(
-                child: Divider(color: Color(0xFF3B82F6), thickness: 2),
-              ),
+              Expanded(child: Divider(color: Color(0xFF3B82F6), thickness: 2)),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
           const Text(
             'I am Muhammad Rashid, a Flutter Developer and Software Engineering student. '
             'I specialize in building modern, scalable, and user-friendly mobile applications '
@@ -158,7 +171,8 @@ class AboutMePage extends StatelessWidget {
               _ServiceCard(
                 icon: Icons.school,
                 title: 'Mentorship',
-                description: 'Helping others grow through guidance and knowledge.',
+                description:
+                    'Helping others grow through guidance and knowledge.',
               ),
             ],
           ),
@@ -175,7 +189,13 @@ class AboutMePage extends StatelessWidget {
           Icon(icon, color: const Color(0xFF22D3EE), size: 18),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(text, style: const TextStyle(color: Colors.grey)),
+            child: Text(
+              text,
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+              ),
+            ),
           ),
         ],
       ),
@@ -183,7 +203,7 @@ class AboutMePage extends StatelessWidget {
   }
 }
 
-class _ServiceCard extends StatelessWidget {
+class _ServiceCard extends StatefulWidget {
   final IconData icon;
   final String title;
   final String description;
@@ -195,40 +215,60 @@ class _ServiceCard extends StatelessWidget {
   });
 
   @override
+  State<_ServiceCard> createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<_ServiceCard> {
+  bool _hover = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 260,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFF1F2937)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: const Color(0xFF3B82F6), size: 30),
-          const SizedBox(height: 14),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        width: 260,
+        padding: const EdgeInsets.all(22),
+        decoration: BoxDecoration(
+          color: _hover ? const Color(0xFF1E293B) : const Color(0xFF0F172A),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFF1F2937)),
+          boxShadow: _hover
+              ? [
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.3),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+                ]
+              : [],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(widget.icon, color: const Color(0xFF3B82F6), size: 32),
+            const SizedBox(height: 16),
+            Text(
+              widget.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            description,
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
-              height: 1.5,
+            const SizedBox(height: 10),
+            Text(
+              widget.description,
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+                height: 1.5,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
-

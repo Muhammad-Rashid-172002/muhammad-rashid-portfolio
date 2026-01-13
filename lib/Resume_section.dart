@@ -1,23 +1,66 @@
 import 'package:flutter/material.dart';
 
-class ResumePage extends StatelessWidget {
+class ResumePage extends StatefulWidget {
   const ResumePage({super.key});
+
+  @override
+  State<ResumePage> createState() => _ResumePageState();
+}
+
+class _ResumePageState extends State<ResumePage> with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
+    // Trigger animation after a small delay
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  // Helper to animate a widget with fade + slide
+  Widget _animate(Widget child, {Offset beginOffset = const Offset(0, 0.2)}) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: Tween<Offset>(begin: beginOffset, end: Offset.zero)
+            .animate(_fadeAnimation),
+        child: child,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF0F172A),
+      color: const Color(0xFF0F172A), // Same as AboutMePage background
       child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // _topBar(),
               const SizedBox(height: 30),
-
-              // RESUME CONTENT
-              _resumeContent(),
+              _animate(_resumeContent(), beginOffset: const Offset(0, 0.1)),
             ],
           ),
         ),
@@ -25,64 +68,36 @@ class ResumePage extends StatelessWidget {
     );
   }
 
-  // // ================= TOP BAR =================
-  // Widget _topBar() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       const Text(
-  //         'Muhammad Rashid',
-  //         style: TextStyle(
-  //           color: Colors.white,
-  //           fontSize: 22,
-  //           fontWeight: FontWeight.bold,
-  //         ),
-  //       ),
-  //       Container(
-  //         padding: const EdgeInsets.all(6),
-  //         decoration: BoxDecoration(
-  //           color: const Color(0xFF111827),
-  //           borderRadius: BorderRadius.circular(40),
-  //         ),
-  //         child: Row(
-  //           children: const [
-  //             _NavItem(icon: Icons.home, label: 'Home'),
-  //             _NavItem(icon: Icons.description, label: 'Resume', active: true),
-  //             _NavItem(icon: Icons.work, label: 'Work'),
-  //             _NavItem(icon: Icons.mail, label: 'Contact'),
-  //           ],
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // // ================= RESUME CONTENT =================
   Widget _resumeContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // HEADER
-        Row(
-          children: const [
-            Text(
-              'RESUME',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+        _animate(
+          Row(
+            children: const [
+              Text(
+                'RESUME',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: Divider(color: Color(0xFF3B82F6), thickness: 2),
-            ),
-          ],
+              SizedBox(width: 16),
+              Expanded(
+                child: Divider(
+                  color: Color(0xFF3B82F6), // Matches AboutMePage
+                  thickness: 2,
+                ),
+              ),
+            ],
+          ),
+          beginOffset: const Offset(0, 0.1),
         ),
-
         const SizedBox(height: 32),
 
-        // ===== EDUCATION & EXPERIENCE (SIDE BY SIDE) =====
+        // EDUCATION & EXPERIENCE
         LayoutBuilder(builder: (context, constraints) {
           final isWide = constraints.maxWidth > 800;
           return Flex(
@@ -94,43 +109,48 @@ class ResumePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _sectionTitle('Education', Icons.school),
-                    _resumeCard(
+                    _animate(_sectionTitle('Education', Icons.school)),
+                    const SizedBox(height: 12),
+                    _animate(_resumeCard(
                       '2023 - 2024',
                       'Flutter Development',
                       'SMIT',
                       Icons.school,
-                    ),
-                    _resumeCard(
+                    )),
+                    _animate(_resumeCard(
                       '2022 - 2025',
                       'Software Engineering',
                       'Sarhad University',
                       Icons.school,
-                    ),
+                    )),
                   ],
                 ),
               ),
 
-              if (isWide) const SizedBox(width: 30) else const SizedBox(height: 24),
+              if (isWide)
+                const SizedBox(width: 30)
+              else
+                const SizedBox(height: 24),
 
               // EXPERIENCE
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _sectionTitle('Experience', Icons.work),
-                    _resumeCard(
+                    _animate(_sectionTitle('Experience', Icons.work)),
+                    const SizedBox(height: 12),
+                    _animate(_resumeCard(
                       '2025 - Present',
                       'Flutter Developer',
                       'MR Technologies',
                       Icons.work,
-                    ),
-                    _resumeCard(
+                    )),
+                    _animate(_resumeCard(
                       '2024 - 2025',
                       'Flutter Developer Intern',
                       'Xohub Solution',
                       Icons.work,
-                    ),
+                    )),
                   ],
                 ),
               ),
@@ -140,8 +160,8 @@ class ResumePage extends StatelessWidget {
 
         const SizedBox(height: 40),
 
-        // ===== WORK SKILLS =====
-        _sectionTitle('Work Skills'),
+        // WORK SKILLS
+        _animate(_sectionTitle('Work Skills')),
         Wrap(
           spacing: 12,
           runSpacing: 12,
@@ -158,11 +178,10 @@ class ResumePage extends StatelessWidget {
             _SkillChip('SQLite / Hive / SharedPreferences'),
           ],
         ),
-
         const SizedBox(height: 32),
 
-        // ===== SOFT SKILLS =====
-        _sectionTitle('Soft Skills'),
+        // SOFT SKILLS
+        _animate(_sectionTitle('Soft Skills')),
         Wrap(
           spacing: 12,
           runSpacing: 12,
@@ -177,7 +196,6 @@ class ResumePage extends StatelessWidget {
             _SkillChip('Creativity'),
           ],
         ),
-
         const SizedBox(height: 40),
       ],
     );
@@ -190,7 +208,7 @@ class ResumePage extends StatelessWidget {
       child: Row(
         children: [
           if (icon != null) ...[
-            Icon(icon, color: Colors.blueAccent, size: 22),
+            Icon(icon, color: const Color(0xFF3B82F6), size: 22),
             const SizedBox(width: 8),
           ],
           Text(
@@ -216,14 +234,21 @@ class ResumePage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
+        color: const Color(0xFF111827), // Matches AboutMePage card color
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFF1F2937)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: Colors.blueAccent, size: 28),
+          Icon(icon, color: const Color(0xFF3B82F6), size: 28),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -249,41 +274,6 @@ class ResumePage extends StatelessWidget {
   }
 }
 
-// ================= NAV ITEM =================
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool active;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    this.active = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: active ? const Color(0xFF3B82F6) : Colors.transparent,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: active ? Colors.white : Colors.grey),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(color: active ? Colors.white : Colors.grey),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ================= SKILL CHIP =================
 class _SkillChip extends StatelessWidget {
   final String label;
@@ -294,7 +284,7 @@ class _SkillChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF1F2937),
+        color: const Color(0xFF1F2937), // Matches AboutMePage
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

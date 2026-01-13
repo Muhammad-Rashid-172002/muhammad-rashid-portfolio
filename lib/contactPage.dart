@@ -8,7 +8,7 @@ class ContactPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF020617),
+      color: const Color(0xFF0F172A), // Match AboutMePage
       child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
@@ -19,10 +19,6 @@ class ContactPage extends StatelessWidget {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                CONTACT CONTENT                              */
-/* -------------------------------------------------------------------------- */
-
 class ContactContent extends StatefulWidget {
   const ContactContent({super.key});
 
@@ -30,7 +26,8 @@ class ContactContent extends StatefulWidget {
   State<ContactContent> createState() => _ContactContentState();
 }
 
-class _ContactContentState extends State<ContactContent> {
+class _ContactContentState extends State<ContactContent>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -38,7 +35,46 @@ class _ContactContentState extends State<ContactContent> {
   final _subjectController = TextEditingController();
   final _messageController = TextEditingController();
 
-  // --------------------- SEND EMAIL ---------------------
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget _animate(Widget child, {Offset beginOffset = const Offset(0, 0.1)}) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position:
+            Tween<Offset>(begin: beginOffset, end: Offset.zero).animate(_fadeAnimation),
+        child: child,
+      ),
+    );
+  }
+
+  /// --------------------- ACTIONS ---------------------
   Future<void> _sendEmail() async {
     final name = _nameController.text;
     final email = _emailController.text;
@@ -51,13 +87,11 @@ class _ContactContentState extends State<ContactContent> {
     if (await canLaunchUrl(Uri.parse(mailtoUrl))) {
       await launchUrl(Uri.parse(mailtoUrl));
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Could not open email app')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Could not open email app')));
     }
   }
 
-  // --------------------- CALL ---------------------
   Future<void> _callNumber() async {
     final uri = Uri.parse('tel:+923195176014');
     if (await canLaunchUrl(uri)) {
@@ -65,7 +99,6 @@ class _ContactContentState extends State<ContactContent> {
     }
   }
 
-  // --------------------- WHATSAPP ---------------------
   Future<void> _openWhatsApp() async {
     final uri = Uri.parse('https://wa.me/923195176014');
     if (await canLaunchUrl(uri)) {
@@ -73,17 +106,13 @@ class _ContactContentState extends State<ContactContent> {
     }
   }
 
-  // --------------------- LINKEDIN ---------------------
   Future<void> _openLinkedIn() async {
-    final uri = Uri.parse(
-      'https://www.linkedin.com/in/muhammad-rashid-flutterdev/',
-    );
+    final uri = Uri.parse('https://www.linkedin.com/in/muhammad-rashid-flutterdev/');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
 
-  // --------------------- GITHUB ---------------------
   Future<void> _openGitHub() async {
     final uri = Uri.parse('https://github.com/Muhammad-Rashid-172002');
     if (await canLaunchUrl(uri)) {
@@ -93,14 +122,13 @@ class _ContactContentState extends State<ContactContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: const Color(0xFF020617),
-      borderRadius: BorderRadius.circular(28),
-      child: Container(
+    return _animate(
+      Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: const Color(0xFF1E293B)),
+          border: Border.all(color: const Color(0xFF1F2937)),
+          color: const Color(0xFF111827), // card background like AboutMe
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +191,7 @@ class _ContactContentState extends State<ContactContent> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF38BDF8),
+                        backgroundColor: const Color(0xFF3B82F6), // AboutMe accent
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -174,7 +202,7 @@ class _ContactContentState extends State<ContactContent> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.white, // match AboutMePage style
                         ),
                       ),
                     ),
@@ -185,46 +213,22 @@ class _ContactContentState extends State<ContactContent> {
 
             const SizedBox(height: 40),
 
-            /// SOCIAL LINKS (CALL, WHATSAPP, EMAIL, LINKEDIN, GITHUB)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            /// SOCIAL LINKS
+            Wrap(
+              spacing: 16,
+              alignment: WrapAlignment.center,
               children: [
-                _socialIcon(
-                  icon: Icons.call,
-                  label: 'Call',
-                  onTap: _callNumber,
-                ),
-                const SizedBox(width: 16),
-                _socialIcon(
-                  icon: FontAwesomeIcons.whatsapp,
-                  label: 'WhatsApp',
-                  onTap: _openWhatsApp,
-                ),
-
-                const SizedBox(width: 16),
-                _socialIcon(
-                  icon: Icons.email,
-                  label: 'Email',
-                  onTap: _sendEmail,
-                ),
-                const SizedBox(width: 16),
-                _socialIcon(
-                  icon: FontAwesomeIcons.linkedin,
-                  label: 'WhatsApp',
-                  onTap: _openWhatsApp,
-                ),
-
-                const SizedBox(width: 16),
-                _socialIcon(
-                  icon: FontAwesomeIcons.github,
-                  label: 'GitHub',
-                  onTap: _openGitHub,
-                ),
+                _socialIcon(icon: Icons.call, onTap: _callNumber),
+                _socialIcon(icon: FontAwesomeIcons.whatsapp, onTap: _openWhatsApp),
+                _socialIcon(icon: Icons.email, onTap: _sendEmail),
+                _socialIcon(icon: FontAwesomeIcons.linkedin, onTap: _openLinkedIn),
+                _socialIcon(icon: FontAwesomeIcons.github, onTap: _openGitHub),
               ],
             ),
           ],
         ),
       ),
+      beginOffset: const Offset(0, 0.1),
     );
   }
 
@@ -253,32 +257,27 @@ class _ContactContentState extends State<ContactContent> {
         ),
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter $label';
-        }
-        if (label == 'Email' && !value.contains('@')) {
-          return 'Enter a valid email';
-        }
+        if (value == null || value.isEmpty) return 'Please enter $label';
+        if (label == 'Email' && !value.contains('@')) return 'Enter a valid email';
         return null;
       },
     );
   }
 
-  Widget _socialIcon({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Ink(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF111827),
-          borderRadius: BorderRadius.circular(12),
+  Widget _socialIcon({required IconData icon, required VoidCallback onTap}) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFF111827),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Icon(icon, color: const Color(0xFF3B82F6), size: 28),
         ),
-        child: Icon(icon, color: const Color(0xFF38BDF8), size: 28),
       ),
     );
   }

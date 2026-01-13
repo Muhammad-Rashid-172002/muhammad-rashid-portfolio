@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "242655922984",
+    "project_id": "muhammad-rashid-a782a",
+    "storage_bucket": "muhammad-rashid-a782a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242655922984:android:afc08148490f9bbc221e1d",
+        "android_client_info": {
+          "package_name": "com.example.rashid_codes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnQbdPVwxphZZusr_LGmESyY3KPhP9l3g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
