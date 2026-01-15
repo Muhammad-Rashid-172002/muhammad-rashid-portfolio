@@ -134,7 +134,8 @@ class _PortfolioContentState extends State<PortfolioContent>
                     crossAxisCount: isWide ? 3 : 2,
                     mainAxisSpacing: 24,
                     crossAxisSpacing: 24,
-                    childAspectRatio: 1.15,
+                   childAspectRatio: isWide ? 1.05 : 0.85,
+
                   ),
                   itemBuilder: (context, index) {
                     return PortfolioCard(project: filteredProjects[index]);
@@ -353,7 +354,7 @@ class _PortfolioCardState extends State<PortfolioCard> {
                               const TextStyle(color: Colors.grey, fontSize: 13)),
                       const SizedBox(height: 12),
                       const Text(
-                        'View on GitHub →',
+                        'View Source →',
                         style:
                             TextStyle(color: Color(0xFF3B82F6), fontSize: 12),
                       ),
