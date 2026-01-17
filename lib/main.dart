@@ -34,16 +34,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Scroll controller to scroll to sections
   final ScrollController _scrollController = ScrollController();
 
-  // Section keys
   final aboutKey = GlobalKey();
   final resumeKey = GlobalKey();
   final portfolioKey = GlobalKey();
   final contactKey = GlobalKey();
 
-  void scrollToSection(GlobalKey key) {
+  void scrollTo(GlobalKey key) {
     final context = key.currentContext;
     if (context != null) {
       Scrollable.ensureVisible(
@@ -54,63 +52,94 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _handleNav(GlobalKey key) {
+    Navigator.pop(context); // close drawer if open
+    scrollTo(key);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: _MobileDrawer(
+        onAbout: () => _handleNav(aboutKey),
+        onResume: () => _handleNav(resumeKey),
+        onPortfolio: () => _handleNav(portfolioKey),
+        onContact: () => _handleNav(contactKey),
+      ),
       body: Column(
         children: [
-          // ---------------- TOP NAVIGATION BAR ----------------
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            color: const Color(0xFF111827),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Muhammad Rashid',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Row(
+          /// ===================== NAV BAR =====================
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isDesktop = constraints.maxWidth > 900;
+
+              return Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                color: const Color(0xFF020617),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _NavItem(
-                        label: 'About Me',
-                        onTap: () => scrollToSection(aboutKey)),
-                    _NavItem(
-                        label: 'Resume',
-                        onTap: () => scrollToSection(resumeKey)),
-                    _NavItem(
-                        label: 'Portfolio',
-                        onTap: () => scrollToSection(portfolioKey)),
-                    _NavItem(
-                        label: 'Contact',
-                        onTap: () => scrollToSection(contactKey)),
+                    const Text(
+                      'Muhammad Rashid',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    /// DESKTOP BUTTONS
+                    if (isDesktop)
+                      Row(
+                        children: [
+                          _NavButton(
+                              label: 'About',
+                              onTap: () => scrollTo(aboutKey)),
+                          _NavButton(
+                              label: 'Resume',
+                              onTap: () => scrollTo(resumeKey)),
+                          _NavButton(
+                              label: 'Portfolio',
+                              onTap: () => scrollTo(portfolioKey)),
+                          _NavButton(
+                              label: 'Contact',
+                              onTap: () => scrollTo(contactKey)),
+                        ],
+                      ),
+
+                    /// MOBILE HAMBURGER
+                    if (!isDesktop)
+                      Builder(
+                        builder: (context) => IconButton(
+                          icon: const Icon(Icons.menu,
+                              color: Colors.white),
+                          onPressed: () =>
+                              Scaffold.of(context).openDrawer(),
+                        ),
+                      ),
                   ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
 
-          // ---------------- PAGE CONTENT ----------------
+          /// ===================== CONTENT =====================
           Expanded(
             child: SingleChildScrollView(
               controller: _scrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Each section wrapped in a key
                   Container(key: aboutKey, child: const AboutMePage()),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 80),
                   Container(key: resumeKey, child: const ResumePage()),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 80),
                   Container(key: portfolioKey, child: const PortfolioPage()),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 80),
                   Container(key: contactKey, child: const ContactPage()),
-                  const SizedBox(height: 50),
-                   const PortfolioFooter(),
+                  const SizedBox(height: 80),
+                  const PortfolioFooter(),
                 ],
               ),
             ),
@@ -121,29 +150,88 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// ---------------- NAV ITEM ----------------
-class _NavItem extends StatelessWidget {
+/// ===================== DESKTOP NAV BUTTON =====================
+class _NavButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _NavItem({required this.label, required this.onTap});
+  const _NavButton({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 6),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(30),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      child: TextButton(
+        onPressed: onTap,
+        style: TextButton.styleFrom(
+          foregroundColor: Colors.white,
+          padding:
+              const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         ),
-        child: Text(
-          label,
-          style: const TextStyle(color: Colors.grey),
-        ),
+        child: Text(label),
       ),
+    );
+  }
+}
+
+/// ===================== MOBILE DRAWER =====================
+class _MobileDrawer extends StatelessWidget {
+  final VoidCallback onAbout;
+  final VoidCallback onResume;
+  final VoidCallback onPortfolio;
+  final VoidCallback onContact;
+
+  const _MobileDrawer({
+    required this.onAbout,
+    required this.onResume,
+    required this.onPortfolio,
+    required this.onContact,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      backgroundColor: const Color(0xFF020617),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 60),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: Text(
+              'Navigation',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          _DrawerItem('About Me', onAbout),
+          _DrawerItem('Resume', onResume),
+          _DrawerItem('Portfolio', onPortfolio),
+          _DrawerItem('Contact', onContact),
+        ],
+      ),
+    );
+  }
+}
+
+class _DrawerItem extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _DrawerItem(this.label, this.onTap);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        label,
+        style: const TextStyle(color: Colors.grey, fontSize: 16),
+      ),
+      onTap: onTap,
     );
   }
 }
